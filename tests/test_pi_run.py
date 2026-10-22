@@ -11,7 +11,7 @@ from pi_run import FIXTURES, MODEL, agent_dir_guard, prepare, replay_command
 
 def test_replay_command_flags(tmp_path):
     command = replay_command(prepare(tmp_path))
-    for flag in ("--offline", "-ne", "-ns", "-np", "-nc", "--no-mcp", f"--model {MODEL}", "--use-theme deepwick", "--session"):
+    for flag in ("--offline", "--no-themes", "-ne", "-ns", "-np", "-nc", "--no-mcp", f"--model {MODEL}", "--use-theme deepwick", "--session"):
         assert f" {flag}" in command, flag
     assert "--session-dir" not in command
     assert "~/.pi" not in command and ".pi/agent" not in command
@@ -62,3 +62,7 @@ def test_guard_ignores_lock_file_churn(tmp_path, monkeypatch):
     with agent_dir_guard():
         (tmp_path / "lock").write_text("")
         (tmp_path / "lock").unlink()
+
+
+def test_replay_command_without_theme_source(tmp_path):
+    assert "--theme" not in replay_command(prepare(tmp_path), theme_source=None).replace("--use-theme", "")

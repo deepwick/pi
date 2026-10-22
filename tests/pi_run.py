@@ -12,7 +12,7 @@ from theme_data import REPO, THEME
 FIXTURES = REPO / "tests/fixtures"
 FIXTURE_CWD = "/home/user/project"
 MODEL = "github-copilot/claude-haiku-5.5:medium"
-REPLAY_FLAGS = ("--offline", "-ne", "-ns", "-np", "-nc", "--no-mcp")
+REPLAY_FLAGS = ("--offline", "--no-themes", "-ne", "-ns", "-np", "-nc", "--no-mcp")
 AGENT_DIR = Path.home() / ".pi/agent"
 
 requires_pi = pytest.mark.skipif(not (shutil.which("pi") and tmux_available()), reason="requires pi and tmux")
@@ -28,10 +28,10 @@ def prepare(tmp_path: Path) -> Path:
     return session
 
 
-def replay_command(session: Path, theme: str = "deepwick", extra: tuple[str, ...] = (), theme_source: Path = THEME) -> str:
+def replay_command(session: Path, theme: str = "deepwick", extra: tuple[str, ...] = (), theme_source: Path | None = THEME) -> str:
     cwd = json.loads(session.read_text().splitlines()[0])["cwd"]
-    args = ["pi", *REPLAY_FLAGS, "--model", MODEL, "--theme", str(theme_source), "--use-theme", theme,
-            "--session", str(session), *extra]
+    source = ["--theme", str(theme_source)] if theme_source else []
+    args = ["pi", *REPLAY_FLAGS, "--model", MODEL, *source, "--use-theme", theme, "--session", str(session), *extra]
     return f"cd {shlex.quote(cwd)} && exec {shlex.join(args)}"
 
 

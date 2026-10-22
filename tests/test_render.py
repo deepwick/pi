@@ -110,3 +110,9 @@ def test_editor_border(pane):
 def test_repo_dir_loads_as_theme_source(tmp_path):
     other = replay(tmp_path, theme_source=REPO / "themes")
     assert containing(other, "What ")["fg"] == C["blue"]
+
+
+def test_package_route_resolves_theme(tmp_path):
+    other = replay(tmp_path, theme_source=None, extra=("-e", str(REPO)))
+    assert "Failed to load theme" not in plain(other)
+    assert containing(other, "What ")["fg"] == C["blue"]

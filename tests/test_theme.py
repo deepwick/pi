@@ -1,11 +1,15 @@
 import json
+import shutil
+import subprocess
 from pathlib import Path
 
 import jsonschema
+import pytest
 
 from deepwick_spec.check_port import check_port
 from deepwick_spec.color import contrast_ratio, normalize_hex
 from deepwick_spec.palette import load_palette
+from pi_run import AGENT_DIR
 from theme_data import REPO, load_theme, resolve
 
 PALETTE = load_palette()
@@ -142,3 +146,12 @@ def test_vendored_schema_version():
 
 def test_port_conventions():
     assert check_port(REPO, PALETTE.allowed_hex()) == []
+
+
+@pytest.mark.skipif(shutil.which("pi") is None, reason="requires pi")
+def test_vendored_schema_matches_installed_pi():
+    version = subprocess.run(["pi", "--version"], capture_output=True, text=True, check=True).stdout.strip()
+    assert version == (REPO / "tests/theme.schema.version").read_text().strip(), "pi changed: re-vendor tests/theme.schema.json and check new roles"
+    installed = AGENT_DIR / "install/releases" / version / "node_modules/@earendil-works/pi-coding-agent/schemas/theme.schema.json"
+    if installed.is_file():
+        assert json.loads(installed.read_text()) == SCHEMA
