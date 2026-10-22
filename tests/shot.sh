@@ -14,6 +14,6 @@ from pi_run import prepare, replay_command
 print(replay_command(prepare(Path(sys.argv[1]))))
 ' "$tmp/home")"
 cmd="${cmd/exec pi /exec $HOME/.pi/agent/bin/pi }"
-SHOT_MAXIMIZE=1 SHOT_DELAY="${SHOT_DELAY:-8}" "$ws/tools/ptyxis-shot" "$repo/screenshot.png" -- \
+SHOT_MAXIMIZE=1 SHOT_CROP=1280x750+0+50 SHOT_DELAY="${SHOT_DELAY:-8}" "$ws/tools/ptyxis-shot" "$repo/screenshot.png" -- \
   env HOME="$tmp/home" PI_CODING_AGENT_DIR="$HOME/.pi/agent" PATH="$node_dir:$PATH" COLORTERM=truecolor \
   bash -c "$cmd"
