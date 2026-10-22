@@ -1,0 +1,12 @@
+{
+  "name": "deepwick-pi",
+  "version": "1.0.0",
+  "description": "Deepwick theme for the pi coding agent",
+  "license": "MIT",
+  "private": true,
+  "keywords": ["pi-package"],
+  "repository": "github:deepwick/pi",
+  "pi": {
+    "themes": ["./themes/*.json"]
+  }
+}
